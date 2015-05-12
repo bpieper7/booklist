@@ -21,20 +21,26 @@ if (isset($_GET["uid"])) {
 	$author = "%";
 	$edition = "%";
 	$isbn = "%";
-	$condition = "%";
+	$condition = 0;
+	$price = 100000;
 
 	//if the parameter is specified, set it, otherwise the variable will stay as wildcard
-	$uid = $_GET['uid'];
-	$title = $_GET['title'];
-	$description = $_GET['description'];
-	$creator = $_GET['creator'];
-	$author = $_GET['author'];
-	$edition = $_GET['edition'];
-	$isbn = $_GET['isbn'];
-	$condition = $_GET['condition'];
+	$uid = $con->real_escape_string($_GET['uid']);
+	$title = $con->real_escape_string($_GET['title']);
+	$description = $con->real_escape_string($_GET['description']);
+	$creator = $con->real_escape_string($_GET['creator']);
+	$author = $con->real_escape_string($_GET['author']);
+	$edition = $con->real_escape_string($_GET['edition']);
+	$isbn = $con->real_escape_string($_GET['isbn']);
+	if(isset($_GET['condition'])) {
+		$condition = $con->real_escape_string($_GET['condition']);
+	}
+	if(isset($_GET['price'])) {
+		$price = $con->real_escape_string($_GET['price']);
+	}
 
 	//get next x books from the table that match search parameters
-	$sql = "SELECT * FROM books WHERE uid > $uid AND title LIKE '%$title%' AND description LIKE '%$description%' AND creator LIKE '%$creator%' AND author LIKE '%$author%' AND edition LIKE '%$edition%' AND isbn LIKE '%$isbn%' AND bookcondition LIKE '%$condition%' LIMIT 25;";
+	$sql = "SELECT * FROM books WHERE uid > $uid AND title LIKE '%$title%' AND description LIKE '%$description%' AND creator LIKE '%$creator%' AND author LIKE '%$author%' AND edition LIKE '%$edition%' AND isbn LIKE '%$isbn%' AND bookcondition >= '$condition' AND price <= '$price' LIMIT 25;";
 	$queryResult = $con->query($sql);
 	
 	//check for empty result
